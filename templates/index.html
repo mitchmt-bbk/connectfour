@@ -1,0 +1,19 @@
+<!-- Run the following to track changes in the browser -->
+<!-- https://flask.palletsprojects.com/en/1.1.x/quickstart/#debug-mode -->
+
+<!-- export FLASK_APP=script.py -->
+<!-- export FLASK_ENV=development -->
+<!-- python -m flask run -->
+
+<!doctype html> 
+<head>
+	{% assets "scss_all" %}
+	<link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
+	{% endassets %}	
+</head>
+<html> 
+   <body> 
+       <h1>Hello, World!</h1>
+       <h2>Wowza!</h2>
+   </body>
+</html> 
