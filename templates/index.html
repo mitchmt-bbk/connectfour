@@ -4,16 +4,58 @@
 <!-- export FLASK_APP=script.py -->
 <!-- export FLASK_ENV=development -->
 <!-- python -m flask run -->
+<!-- export FLASK_APP=script.py && export FLASK_ENV=development && python -m flask run -->
 
 <!doctype html> 
 <head>
-	{% assets "scss_all" %}
-	<link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
-	{% endassets %}	
+	<!-- TODO: Use something to merge these files into one -->
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='reset.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles.css')}}">
 </head>
 <html> 
-   <body> 
-       <h1>Hello, World!</h1>
-       <h2>Wowza!</h2>
-   </body>
-</html> 
+	<body> 
+
+		<section class="main-wrapper">
+
+			<header class="header-wrapper">
+				<h1>Connect Four</h1>
+			</header>
+
+			<main>
+				<div class="board-wrapper">
+					<div class="board">
+
+						{%for i in range(0, 7)%} 
+						    <div class="col" data-column="{{i}}">
+								{%for j in range(0, 6)%}
+									<div class="cell-square"></div>
+								{%endfor%} 
+						    </div>
+						{%endfor%} 
+
+					</div>
+					<div class="instruction">
+						<p>Please selected a column to drop your token. The aim of the game is to connect four of your tokesn in a row – horizontally, vertically or diagonally.</p>
+					</div>
+				</div>
+			</main>
+
+			<footer>
+				Footer Info
+			</footer>
+
+		</section>
+
+		<script type="text/javascript" src="{{url_for('static', filename='jquery.js') }}"></script>
+		<script>
+
+
+			$('.col').on('click',function(){
+				console.log($(this).data('column'))
+			});
+
+
+
+		</script>
+	</body>
+</html>
