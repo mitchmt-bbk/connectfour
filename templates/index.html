@@ -16,7 +16,7 @@
 <html> 
 	<body> 
 
-		<section class="main-wrapper">
+		<section class="site-wrapper">
 
 			<header class="header-wrapper">
 				<h1>Connect Four</h1>
@@ -25,36 +25,259 @@
 			<main>
 				<div class="board-wrapper">
 					<div class="board">
+						<div class="overlay"></div>
 
 						{%for i in range(0, 7)%} 
 						    <div class="col" data-column="{{i}}">
-								{%for j in range(0, 6)%}
-									<div class="cell-square"></div>
+								{%for j in range(0, 6) | reverse %}
+									<div class="cell-square" data-row="{{j}}"></div>
 								{%endfor%} 
 						    </div>
 						{%endfor%} 
 
 					</div>
-					<div class="instructions">
-						<p>Please selected a column to drop your token. The aim of the game is to connect four of your tokesn in a row – horizontally, vertically or diagonally.</p>
+					<div class="pop-up">
+						<h1></h1>
+						<button class="play-again">Play Again</button>
 					</div>
+				</div>
+				<div class="btn-wrapper">
+					<button class="reset-btn">
+						Restart Game
+					</button>
+				</div>
+				<div class="instructions">
+					<p>Please select a column to drop your token. The aim of the game is to place four of your tokens in a row – horizontally, vertically, or diagonally – before your opponent!</p>
 				</div>
 			</main>
 
 			<footer>
-				Footer Info
+				&copy;{{ now.year }} M. Merrick-Thirlway
 			</footer>
 
 		</section>
 
+		<!-- TODO Merge and minify all of this JS into one file -->
 		<script type="text/javascript" src="{{url_for('static', filename='jquery.js') }}"></script>
+		<script type="text/javascript" src="{{url_for('static', filename='anime.min.js') }}"></script>
 		<script>
 
+			$(document).ready(() => {
 
-			$('.col').on('click',function(){
-				console.log($(this).data('column'))
+				function main(){
+
+					let canPlayerMakeMove = true,
+						tokenWidth = getTokenWidth(),
+						tokenNum = 0,
+						showRestButton = false,
+						resetBtn = $('.reset-btn'),
+						playAgainBtn = $('.play-again'),
+						overlay = $('.overlay'),
+						maxRowNum = 5;
+
+					$('.col').on('click',function(){
+						
+						if (!showRestButton) {
+							showRestButton = true;
+							resetBtn.fadeIn();
+						}
+
+						if (canPlayerMakeMove) {
+							let playerMoveCol = $(this).data('column'),
+								playerMoveRow = getNextAvailableRow(playerMoveCol),
+								playerMove = [playerMoveCol,playerMoveRow];
+
+							if (playerMoveRow > maxRowNum) {
+								fullColumnError(playerMoveCol);
+								return;
+							}
+
+							canPlayerMakeMove = false;
+							token = createToken('player', tokenWidth, tokenNum);
+							tokenNum++;
+							placeToken(token, playerMove);
+
+							$.ajax({
+								data: {
+									player_move: playerMoveCol
+								},
+								type: 'POST',
+								url: '/process-move'
+							})
+							.done(function(data){
+								console.log(data);
+								if (data.is_win == 1) {
+									displayPopUp(['player-win','You won!']);
+								} else if (data.is_win == 2) {
+									displayPopUp(['player-lose','You lost!']);
+								} else if (data.is_win == 3) {
+									displayPopUp(['draw','It was a draw']);
+								} else {
+									setTimeout(function(){
+										let token = createToken('ai', tokenWidth, tokenNum);
+										tokenNum++;
+
+										// For demo purposes START
+										let aiMoveCol = data.ai_move[0],
+											aiMoveRow = getNextAvailableRow(aiMoveCol),
+											aiMove = [aiMoveCol,aiMoveRow];
+										placeToken(token, aiMove);
+										// For demo purposes END
+
+										// How it should actually work
+										// placeToken(token, data.ai_move);
+
+									}, 750);
+									// TODO Leave the below but change to 500ms
+									setTimeout(function(){
+										canPlayerMakeMove = true;
+									}, 1000)
+								}
+							})
+						} else {
+							console.log('Wait your turn!');
+						}
+					});
+
+					$(window).resize(function() {
+						tokenWidth = getTokenWidth();
+						$('.token').css({'width': tokenWidth, 'height': tokenWidth});
+						let allTokens = $('.token');
+						for (var i = 0; i < allTokens.length; i++) {
+							// console.log($(allTokens[i]));
+						}
+					});
+
+					resetBtn.on('click',function(){
+						showRestButton = false;
+						canPlayerMakeMove = true;
+						resetBtn.fadeOut('fast');
+						overlay.fadeOut();
+						resetGame();
+					});
+
+					playAgainBtn.on('click',function(){
+						showRestButton = false;
+						canPlayerMakeMove = true;
+						resetBtn.fadeOut('fast');
+						overlay.fadeOut();
+						$('.pop-up').fadeOut();
+						resetGame();
+					});
+
+				}
+
+				function getNextAvailableRow(chosenCol) {
+					let col = $(document).find(`.col[data-column='${chosenCol}']`),
+						rowCells = $(col[0]).find('.token').length;
+					return rowCells;
+				}
+
+				function createToken(tokenColour, tokenWidth, tokenNum) {
+					let tokenEl = $('<div id="token-'+tokenNum+'" class="token '+tokenColour+'"></div>');
+					tokenEl.css({'width': tokenWidth, 'height': tokenWidth});
+					return tokenEl;
+				}
+
+				function placeToken(token, tokenPosition){
+					let tokenId = $(token).attr('id'),
+						randomRow = Math.floor(Math.random() * (5 - 0 + 1)) + 0,
+						rowPos = calcRowPosition(tokenPosition[0],tokenPosition[1]);
+
+					token.prependTo($(document).find(`.col[data-column='${tokenPosition[0]}']`));
+
+					anime({
+					  targets: '#'+tokenId,
+					  translateY: rowPos,
+					  easing: 'easeOutBounce',
+					});
+				}
+
+				function calcRowPosition(colNum, rowNum){
+					let col = $(document).find(`.col[data-column='${colNum}']`),
+						rowCell = $(col[0]).find(`.cell-square[data-row='${rowNum}']`),
+						rowCellPadding = parseInt(rowCell.css('font-size'));
+					return parseInt($(rowCell).position().top + rowCellPadding);
+				}
+
+				function fullColumnError(colNum) {
+					let col = $(document).find(`.col[data-column='${colNum}']`);
+					$(col).toggleClass('col-full');
+					setTimeout(function(){
+						$(col).toggleClass('col-full');
+					},200);
+				}
+
+				function getTokenWidth(){
+					let col = $('.col')[0],
+						colWidth = parseInt($(col).outerWidth()),
+						tokenWidth = colWidth - (colWidth * 0.09);
+					return tokenWidth;
+				}
+
+				function resetGame(){
+					// TODO Also need to tell Python that the game has been reset
+					let allTokens = $('.token');
+					allTokens.fadeOut('fast', function() {
+						allTokens.remove();
+					});
+				}
+
+				function displayPopUp(content){
+					let popUp = $('.pop-up'),
+						overlay = $('.overlay');
+
+					popUp.addClass(content[0]);
+					popUp.find('h1').text(content[1]);
+
+					overlay.fadeIn('fast', function(){
+						popUp.fadeIn();	
+					});
+				}
+
+				main();
+
+
+
+
+	// TODO	
+	// Reset table – tell Python the game has been reset
+	// Update position of tokens on resize
+	// Landscape alert
+
+
+
+	// DONE 
+	// Speed of the token dropping
+	// set the position of the token when it drops (the translateY value)	
+	// set the token width properly
+	// Update the amount of bounce on the token animation
+	// Success messages
+
+	// Additional
+	// Add counter to show how many wins/losses?
+	// Highlight the four winning tokens before showing the pop-up?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			});
-
 
 
 		</script>

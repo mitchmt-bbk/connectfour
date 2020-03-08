@@ -1,43 +1,142 @@
-body {
-  font-family: 'Spartan', sans-serif; }
+html {
+  font-size: 10px; }
 
-  .main-wrapper {
-    padding: 2rem; }
-    .main-wrapper .header-wrapper {
-      text-align: center; }
-      .main-wrapper .header-wrapper h1 {
-        font-size: 2rem; }
-    .main-wrapper .board-wrapper {
-      max-width: 600px;
-      margin: 3rem auto 3rem auto; }
-      .main-wrapper .board-wrapper .board {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr); }
-        .main-wrapper .board-wrapper .board .col {
-          width: 100%; }
-          .main-wrapper .board-wrapper .board .col:hover {
+  body {
+    font-size: 1.6rem;
+    font-family: 'Spartan', sans-serif;
+    line-height: 1.6;
+    color: #3e3e3e; }
+
+    .button-reset, .site-wrapper .board-wrapper .pop-up .play-again,
+    .site-wrapper .btn-wrapper .reset-btn {
+      padding: 0;
+      border: none;
+      margin: 0 auto;
+      cursor: pointer;
+      outline: none;
+      -webkit-appearance: none;
+      border-radius: 0; }
+
+      .game-button-style, .site-wrapper .board-wrapper .pop-up .play-again,
+      .site-wrapper .btn-wrapper .reset-btn {
+        background: #007ab3;
+        padding: 1rem 2rem;
+        color: #fff;
+        font-size: 1.5rem;
+        transition: opacity 0.2s ease-in-out; }
+        .game-button-style:hover, .site-wrapper .board-wrapper .pop-up :hover.play-again,
+        .site-wrapper .btn-wrapper :hover.reset-btn {
+          opacity: 0.8; }
+
+.site-wrapper {
+  box-sizing: border-box;
+  padding: 2rem; }
+  .site-wrapper .header-wrapper {
+    text-align: center; }
+    .site-wrapper .header-wrapper h1 {
+      font-size: 3rem; }
+  .site-wrapper .board-wrapper {
+    max-width: 60rem;
+    margin: 3rem auto 0 auto;
+    position: relative; }
+    .site-wrapper .board-wrapper .board {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr); }
+      .site-wrapper .board-wrapper .board .col {
+        width: calc(100% - 0.1rem);
+        border-right: 0.1rem solid #00608e;
+        position: relative; }
+        .site-wrapper .board-wrapper .board .col:last-of-type {
+          border-right: none; }
+          .site-wrapper .board-wrapper .board .col:hover {
             cursor: pointer; }
-            .main-wrapper .board-wrapper .board .col:hover .cell-square:after {
-              box-shadow: 0px 0px 0px 5rem #0196dc; }
-          .main-wrapper .board-wrapper .board .col .cell-square {
-            position: relative;
-            width: 100%;
-            padding-top: 100%;
-            margin: 0 auto;
-            overflow: hidden; }
-            .main-wrapper .board-wrapper .board .col .cell-square:after {
-              transition: box-shadow 0.25s ease-in-out;
-              content: '';
-              position: absolute;
-              left: 5px;
-              top: 5px;
-              border-radius: 100%;
-              width: calc(100% - 10px);
-              padding-top: calc(100% - 10px);
-              box-shadow: 0px 0px 0px 5rem #007ab3; }
-      .main-wrapper .board-wrapper .instructions {
-        text-align: center;
-        padding: 1rem;
-        line-height: 1.5; }
-    .main-wrapper footer {
-      border: 1px solid purple; }
+            .site-wrapper .board-wrapper .board .col:hover .cell-square:after {
+              box-shadow: 0 0 0 5rem #0196dc; }
+        .site-wrapper .board-wrapper .board .col .cell-square {
+          position: relative;
+          width: 100%;
+          padding-top: 100%;
+          margin: 0 auto;
+          overflow: hidden;
+          font-size: 0.5rem; }
+          .site-wrapper .board-wrapper .board .col .cell-square:after {
+            transition: box-shadow 0.25s ease-in-out;
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.5rem;
+            border-radius: 100%;
+            width: calc(100% - 1rem);
+            padding-top: calc(100% - 1rem);
+            box-shadow: 0 0 0 5rem #007ab3; }
+        .site-wrapper .board-wrapper .board .col.col-full .cell-square:after {
+          transition: box-shadow 0.4s ease-out;
+          box-shadow: 0 0 0 5rem #b90000; }
+      .site-wrapper .board-wrapper .board .token {
+        height: 4rem;
+        width: 4rem;
+        border-radius: 100rem;
+        position: absolute;
+        background: lightgrey;
+        left: 0;
+        right: 0;
+        margin: auto; }
+        .site-wrapper .board-wrapper .board .token.player {
+          background: #fdec00; }
+          .site-wrapper .board-wrapper .board .token.ai {
+            background: #f50000; }
+      .site-wrapper .board-wrapper .board .overlay {
+        position: absolute;
+        display: none;
+        background: #fff;
+        opacity: 0.8;
+        z-index: 100;
+        width: 100%;
+        height: 100%; }
+    .site-wrapper .board-wrapper .pop-up {
+      display: none;
+      text-align: center;
+      background: #fff;
+      width: 70%;
+      padding: 3rem 2rem;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 200;
+      border: 0.3rem solid #616161;
+      -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%); }
+      .site-wrapper .board-wrapper .pop-up h1 {
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #616161; }
+        .site-wrapper .board-wrapper .pop-up .play-again {
+          background: #616161; }
+          .site-wrapper .board-wrapper .pop-up.player-win {
+            border: 0.3rem solid #008000; }
+            .site-wrapper .board-wrapper .pop-up.player-win h1 {
+              color: #008000; }
+              .site-wrapper .board-wrapper .pop-up.player-win .play-again {
+                background: #008000; }
+      .site-wrapper .board-wrapper .pop-up.player-lose {
+        border: 0.3rem solid #ef0000; }
+        .site-wrapper .board-wrapper .pop-up.player-lose h1 {
+          color: #ef0000; }
+          .site-wrapper .board-wrapper .pop-up.player-lose .play-again {
+            background: #ef0000; }
+  .site-wrapper .btn-wrapper {
+    text-align: center;
+    margin-top: 1rem; }
+    .site-wrapper .btn-wrapper .reset-btn {
+      display: none; }
+  .site-wrapper .instructions {
+    max-width: 60rem;
+    margin: auto;
+    text-align: center;
+    padding: 2rem 1rem 1rem 1rem; }
+    .site-wrapper footer {
+      margin-top: 8rem;
+      font-size: 1.2rem; }

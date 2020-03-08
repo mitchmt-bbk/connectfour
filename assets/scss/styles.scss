@@ -1,66 +1,197 @@
 // Create colour variables here
+$primary-font-color: #3e3e3e;
 $tile-color: #007ab3;
 $tile-color-hover: #0196dc;
+$tile-col-color: #00608e;
+$tile-color-player: #fdec00;
+$tile-color-ai: #f50000;
+$tile-error: #b90000;
+$win-color: #008000;
+$lose-color: #ef0000;
+$draw-color: #616161;
 
-body {
-	font-family: 'Spartan', sans-serif;
+html {
+	/* Make rem calculations a lot simpler */
+	font-size: 10px; 
 }
 
-.main-wrapper {
+body {	
+	font-size: 1.6rem;	
+	font-family: 'Spartan', sans-serif;
+	line-height: 1.6;
+	color: $primary-font-color;
+}
+
+.button-reset {
+	padding: 0;
+	border: none;
+	margin: 0 auto;
+	cursor: pointer;
+	outline: none;
+	-webkit-appearance: none;
+	border-radius: 0;
+}
+
+.game-button-style {
+	background: $tile-color;
+	padding: 1rem 2rem;
+	color: #fff;
+	font-size: 1.5rem;
+	transition: opacity 0.2s ease-in-out;
+	&:hover {
+		opacity: 0.8;
+	}
+}
+
+.site-wrapper {
+	box-sizing: border-box;
 	padding: 2rem;
 	.header-wrapper {
-		// border: 1px solid green;
 		text-align: center;
 		h1 {
-			font-size: 2rem;
+			font-size: 3rem;
 		}
 	}
 	.board-wrapper {
-		// border: 1px solid red;
-		max-width: 600px;
-		margin: 3rem auto 3rem auto;
+		max-width: 60rem;
+		margin: 3rem auto 0 auto;
+		position: relative;
 		.board {
 			display: grid;
 			grid-template-columns: repeat(7, 1fr);
 			.col {
-				width: 100%;
+				width: calc(100% - 0.1rem);
+				border-right: 0.1rem solid $tile-col-color;
+				position: relative;
+				&:last-of-type {
+					border-right: none;
+				}
 				&:hover {
-					// background: lightgrey;
 					cursor: pointer;
 					.cell-square{
 						&:after{
-					    	box-shadow: 0px 0px 0px 5rem $tile-color-hover;
+					    	box-shadow: 0 0 0 5rem $tile-color-hover;
 						}
 					}
 				}
-				.cell-square{
+				.cell-square {
 					position: relative;
 					width: 100%;
 					padding-top: 100%;
 					margin: 0 auto;
 					overflow: hidden;
+					font-size: 0.5rem; // Used to pass padding size to jQuery
 					&:after{
 						transition: box-shadow 0.25s ease-in-out;
 						content: '';
 						position: absolute;
-						left: 5px;
-						top: 5px;
+						left: 0.5rem;
+						top: 0.5rem;
 						border-radius: 100%;
-						width: calc(100% - 10px);
-						padding-top: calc(100% - 10px);
-					    box-shadow: 0px 0px 0px 5rem $tile-color;
+						width: calc(100% - 1rem);
+						padding-top: calc(100% - 1rem);
+					    box-shadow: 0 0 0 5rem $tile-color;
+					}
+				}
+				&.col-full {
+					.cell-square{
+						&:after{
+							transition: box-shadow .4s ease-out;
+						    box-shadow: 0 0 0 5rem $tile-error;
+						}
 					}
 				}
 			}
+			.token {
+				height: 4rem;
+				width: 4rem;
+				border-radius: 100rem;
+				position: absolute;
+				background: lightgrey;
+				left: 0; 
+				right: 0; 
+				margin: auto;
+				&.player {
+					background: $tile-color-player;
+				}
+				&.ai {
+					background: $tile-color-ai;
+				}
+			}
+			.overlay {
+			    position: absolute;
+			    display: none;
+			    background: #fff;
+			    opacity: 0.8;
+			    z-index: 100;
+			    width: 100%;
+			    height: 100%;
+			}
 		}
-		.instructions {
+		.pop-up {
+			display: none;
 			text-align: center;
-			padding: 1rem;
-			line-height: 1.5;
+		    background: #fff;
+		    width: 70%;
+		    padding: 3rem 2rem;
+		    position: absolute;
+	        left: 50%;
+	        top: 50%;
+	        z-index: 200;
+        	border: 0.3rem solid $draw-color;
+	        -webkit-transform: translate(-50%, -50%);
+	        -ms-transform: translate(-50%, -50%);
+	        transform: translate(-50%, -50%);
+	        h1 {
+	        	text-transform: uppercase;
+			    font-weight: bold;
+			    font-size: 3rem;
+			    margin-bottom: 1rem;
+	        	color: $draw-color;
+	        }
+	        .play-again {
+				@extend .button-reset;
+				@extend .game-button-style;
+	        	background: $draw-color;
+	        }
+	        &.player-win {
+	        	border: 0.3rem solid $win-color;
+		        h1 {
+		        	color: $win-color;
+		        }
+		        .play-again {
+		        	background: $win-color;
+		        }
+	        }
+	        &.player-lose {
+	        	border: 0.3rem solid $lose-color;
+		        h1 {
+		        	color: $lose-color;
+		        }
+		        .play-again {
+		        	background: $lose-color;
+		        }
+	        }
 		}
 	}
+	.btn-wrapper {
+		text-align: center;
+		margin-top: 1rem;
+		.reset-btn {
+			@extend .button-reset;
+			@extend .game-button-style;
+			display: none;
+		}
+	}
+	.instructions {
+		max-width: 60rem;
+		margin: auto;
+		text-align: center;
+		padding: 2rem 1rem 1rem 1rem;
+	}
 	footer {
-		border: 1px solid purple;
+		margin-top: 8rem;
+		font-size: 1.2rem;
 	}	
 }
 
