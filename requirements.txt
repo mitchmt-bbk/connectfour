@@ -1,0 +1,6 @@
+Flask
+Flask-Assets
+Werkzeug
+Flask-Scss
+jsmin
+cssmin
