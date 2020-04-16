@@ -1,10 +1,12 @@
 import numpy as np
 import threading
-from random import randint
-from tqdm import tqdm
+from random import randrange
 
+# The Agent
 class ConnectFourAi:
 
 	def __init__(self):
-		print('Class initialised!')
-			
+		pass
+
+	def ai_selection(self, options):
+		return randrange(len(options))

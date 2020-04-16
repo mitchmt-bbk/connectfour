@@ -1,19 +1,18 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
-from ai.ConnectFourAi import ConnectFourAi
 from random import randint # TODO remove this if no longer using
 
 app = Flask(__name__)
 
-ai = ConnectFourAi()
-
 @app.context_processor
 def inject_now():
-    return {'now': datetime.utcnow()}
+	return {'now': datetime.utcnow()}
+
 
 @app.route('/')
 def main_page():
 	return render_template('index.html', now=datetime.utcnow())
+
 
 @app.route('/process-move', methods=['POST'])
 def process_move():
