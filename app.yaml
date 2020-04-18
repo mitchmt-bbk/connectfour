@@ -1,0 +1,8 @@
+runtime: python38
+
+handlers:
+- url: /minified
+  static_dir: static/minified
+
+- url: /.*
+  script: auto

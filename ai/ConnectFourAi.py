@@ -1,6 +1,7 @@
 import numpy as np
 import threading
 from random import randrange
+from ai.qlearning.QLearningAgent import QLearningAgent
 
 # The Agent
 class ConnectFourAi:

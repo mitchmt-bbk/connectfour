@@ -1,0 +1,10 @@
+Flask
+Flask-Assets
+numpy
+Werkzeug
+Flask-Scss
+jsmin
+cssmin
+tqdm
+h5py
+matplotlib

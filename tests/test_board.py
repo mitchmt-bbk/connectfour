@@ -4,7 +4,7 @@ from ai.Board import Board
 import ai.config as config
 
 class BoardTests(unittest.TestCase):
-    board = Nonep
+    board = None
     test_board = None
 
     # # # # # # # # # # #
